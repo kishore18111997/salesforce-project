@@ -1,0 +1,48 @@
+[
+  {
+    "attributes": { "type": "Account", "referenceId": "AccountRef1" },
+    "Name": "Acme Corporation",
+    "Phone": "+1234567890",
+    "Website": "https://acme.com",
+    "BillingCity": "New York",
+    "BillingState": "NY",
+    "BillingCountry": "USA",
+    "Contacts": [
+      {
+        "attributes": { "type": "Contact", "referenceId": "ContactRef1" },
+        "FirstName": "John",
+        "LastName": "Doe",
+        "Email": "johndoe@acme.com",
+        "Phone": "+1234567891",
+        "AccountId": "@AccountRef1"
+      },
+      {
+        "attributes": { "type": "Contact", "referenceId": "ContactRef2" },
+        "FirstName": "Jane",
+        "LastName": "Smith",
+        "Email": "janesmith@acme.com",
+        "Phone": "+1234567892",
+        "AccountId": "@AccountRef1"
+      }
+    ]
+  },
+  {
+    "attributes": { "type": "Account", "referenceId": "AccountRef2" },
+    "Name": "Global Tech",
+    "Phone": "+9876543210",
+    "Website": "https://globaltech.com",
+    "BillingCity": "San Francisco",
+    "BillingState": "CA",
+    "BillingCountry": "USA",
+    "Contacts": [
+      {
+        "attributes": { "type": "Contact", "referenceId": "ContactRef3" },
+        "FirstName": "Alice",
+        "LastName": "Johnson",
+        "Email": "alice.johnson@globaltech.com",
+        "Phone": "+9876543211",
+        "AccountId": "@AccountRef2"
+      }
+    ]
+  }
+]
