@@ -1,0 +1,30 @@
+name: Salesforce Deployment
+
+on:
+  push:
+    branches:
+      - main  # Trigger on push to main branch
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Salesforce CLI
+        run: |
+          curl https://developer.salesforce.com/media/salesforce-cli/sfdx-linux-x64.tar.xz -o sfdx.tar.xz
+          tar xvf sfdx.tar.xz
+          ./sfdx/install
+
+      - name: Authenticate to Salesforce
+        run: sfdx force:auth:jwt:grant --clientid ${{secrets.SFDX_CLIENT_ID}} --jwtkeyfile ${{secrets.SFDX_JWT_KEYFILE}} --username ${{secrets.SFDX_USERNAME}} --instanceurl https://login.salesforce.com
+
+      - name: Retrieve Salesforce Metadata
+        run: |
+          sfdx force:source:retrieve --manifest package.xml
+
+      - name: Deploy to Salesforce
+        run: |
+          sfdx force:source:deploy --manifest package.xml --testlevel RunLocalTests
