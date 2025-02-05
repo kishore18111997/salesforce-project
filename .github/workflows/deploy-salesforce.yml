@@ -12,12 +12,20 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
-      - name: Set up Salesforce CLI
-        run: |
-          curl https://developer.salesforce.com/media/salesforce-cli/sfdx-linux-x64.tar.xz -o sfdx.tar.xz
-          tar xvf sfdx.tar.xz
-          ./sfdx/install
+      # - name: Set up Salesforce CLI
+      #   run: |
+      #     curl https://developer.salesforce.com/media/salesforce-cli/sfdx-linux-x64.tar.xz -o sfdx.tar.xz
+      #     tar xvf sfdx.tar.xz
+      #     ./sfdx/install
 
+      - name: Install Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+
+      - name: Install Salesforce CLI
+        run: npm install --global sfdx-cli
+      
       - name: Authenticate to Salesforce
         run: sfdx force:auth:jwt:grant --clientid ${{secrets.SFDX_CLIENT_ID}} --jwtkeyfile ${{secrets.SFDX_JWT_KEYFILE}} --username ${{secrets.SFDX_USERNAME}} --instanceurl https://login.salesforce.com
 
