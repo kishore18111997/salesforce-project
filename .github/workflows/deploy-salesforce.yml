@@ -24,7 +24,9 @@ jobs:
           node-version: '18'
 
       - name: Install Salesforce CLI
-        run: npm install --global sfdx-cli
+        run: |
+          npm install --global sfdx-cli
+          sfdx --version
       
       - name: Authenticate to Salesforce
         run: |
