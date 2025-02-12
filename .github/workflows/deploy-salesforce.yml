@@ -35,7 +35,7 @@ jobs:
           sfdx force:auth:jwt:grant --client-id ${{ secrets.SF_CONSUMER_KEY }}   --jwt-key-file server.key --username ${{ secrets.SF_USERNAME }}   --instance-url https://login.salesforce.com --set-default-dev-hub
 
       - name: Verify Authentication
-        run: sfdx org:display
+        run: sfdx org:list
       
       - name: Retrieve Salesforce Metadata
         run: |
