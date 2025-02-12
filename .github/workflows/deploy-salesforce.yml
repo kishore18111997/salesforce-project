@@ -25,7 +25,7 @@ jobs:
 
       - name: Install Salesforce CLI
         run: |
-          npm install --global sfdx-cli
+          npm install --global sfdx-cli@7.209.6
           export PATH="/home/runner/.npm-global/bin:$PATH"
           sfdx --version
       
