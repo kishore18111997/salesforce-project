@@ -33,6 +33,9 @@ jobs:
             --jwt-key-file server.key --username ${{ secrets.SF_USERNAME }} \
             --instance-url https://login.salesforce.com
 
+      - name: Verify Authentication
+        run: sfdx force:org:display
+      
       - name: Retrieve Salesforce Metadata
         run: |
           sfdx force:source:retrieve --manifest package.xml
