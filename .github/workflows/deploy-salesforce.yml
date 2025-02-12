@@ -27,7 +27,11 @@ jobs:
         run: npm install --global sfdx-cli
       
       - name: Authenticate to Salesforce
-        run: sfdx force:auth:jwt:grant --clientid ${{secrets.SFDX_CLIENT_ID}} --jwtkeyfile ${{secrets.SFDX_JWT_KEYFILE}} --username ${{secrets.SFDX_USERNAME}} --instanceurl https://login.salesforce.com
+        run: |
+          echo "${{ secrets.SF_PRIVATE_KEY }}" > server.key
+          sfdx auth:jwt:grant --client-id ${{ secrets.SF_CONSUMER_KEY }} \
+            --jwt-key-file server.key --username ${{ secrets.SF_USERNAME }} \
+            --instance-url https://login.salesforce.com
 
       - name: Retrieve Salesforce Metadata
         run: |
