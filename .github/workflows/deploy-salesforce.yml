@@ -32,10 +32,10 @@ jobs:
       - name: Authenticate to Salesforce
         run: |
           echo "${{ secrets.SF_PRIVATE_KEY }}" > server.key
-          sfdx force:auth:jwt:grant --client-id 3MVG9PwZx9R6_UrfM1s1WcZIK1oJv7XQ5FnHly3lcJ_gLADFHRF27x7rtBA2xaZXKsmsbS6Ujj8ASgmkPgp4H   --jwt-key-file server.key --username kishorenate@gmail.com   --instance-url https://login.salesforce.com --set-default-dev-hub
+          sfdx force:auth:jwt:grant --client-id ${{ secrets.SF_CONSUMER_KEY }}   --jwt-key-file server.key --username ${{ secrets.SF_USERNAME }}   --instance-url https://login.salesforce.com --set-default-dev-hub
 
       - name: Verify Authentication
-        run: sfdx force:org:display
+        run: sfdx org:display
       
       - name: Retrieve Salesforce Metadata
         run: |
