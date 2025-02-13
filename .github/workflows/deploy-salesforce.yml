@@ -43,4 +43,4 @@ jobs:
 
       - name: Deploy to Salesforce
         run: |
-          sf project deploy start --source-dir force-app --target-org kishorenate@gmail.com
+          sfdx force:source:deploy -p force-app -u kishorenate@gmail.com
