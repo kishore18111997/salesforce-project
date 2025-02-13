@@ -43,4 +43,4 @@ jobs:
 
       - name: Deploy to Salesforce
         run: |
-          sfdx force:source:deploy --manifest package.xml --testlevel RunLocalTests
+          sf project deploy start --source-dir force-app --target-org kishorenate@gmail.com
