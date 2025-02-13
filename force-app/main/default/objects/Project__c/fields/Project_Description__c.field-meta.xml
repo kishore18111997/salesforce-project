@@ -3,5 +3,4 @@
     <fullName>Project_Description__c</fullName>
     <label>Project Description</label>
     <type>TextArea</type>
-    <length>255</length>
 </CustomField>
