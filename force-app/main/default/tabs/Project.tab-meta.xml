@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <CustomTab xmlns="http://soap.sforce.com/2006/04/metadata">
-    <sobjectName>Project__c</sobjectName>
+    <fullName>Project__c</fullName>  <!-- fullName should be first -->
     <label>Project</label>
+    <sobjectName>Project__c</sobjectName>  <!-- sobjectName comes after label -->
     <mobileReady>true</mobileReady>
     <motif>Custom12: Hammer</motif>
 </CustomTab>
