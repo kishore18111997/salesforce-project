@@ -39,7 +39,7 @@ jobs:
       
       - name: Retrieve Salesforce Metadata
         run: |
-          sf project retrieve start --metadata "CustomObject" --target-org kishorenate@gmail.com
+          sfdx force:source:retrieve -m CustomObject -u kishorenate@gmail.com
 
       - name: Deploy to Salesforce
         run: |
