@@ -1,0 +1,40 @@
+name: Salesforce Deployment
+
+on:
+  push:
+    branches:
+      - master 
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Install Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '22'
+
+      - name: Install Salesforce CLI
+        run: |
+          npm install --global @salesforce/cli
+          export PATH="/home/runner/.npm-global/bin:$PATH"
+          sf --version
+      
+      - name: Authenticate to Salesforce
+        run: |
+          echo "${{ secrets.SF_PRIVATE_KEY }}" > server.key
+          sf org login jwt --client-id ${{ secrets.SF_CONSUMER_KEY }} --jwt-key-file server.key --username ${{ secrets.SF_USERNAME }} --instance-url https://login.salesforce.com --set-default
+
+      - name: Verify Authentication
+        run: sf org list
+      
+      - name: Retrieve Salesforce Metadata
+        run: |
+          sf project retrieve start --metadata CustomObject --target-org ${{ secrets.SF_USERNAME }}
+
+      - name: Deploy to Salesforce
+        run: |
+          sf project deploy start --source-dir force-app --target-org ${{ secrets.SF_USERNAME }}
