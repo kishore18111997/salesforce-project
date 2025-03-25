@@ -40,7 +40,6 @@ jobs:
         run: |
           mkdir -p data
           OBJECTS=$(sfdx force:data:soql:query -q "SELECT QualifiedApiName FROM EntityDefinition WHERE IsCustomSetting = FALSE AND IsEverCreatable = TRUE" --target-org ${{ secrets.SF_USERNAME }} --json | jq -r '.result.records[].QualifiedApiName')
-          fi
           for OBJECT in $OBJECTS; do
               echo "Backing up: $OBJECT"
               FIELDS=$(sfdx force:data:soql:query -q "SELECT QualifiedApiName FROM FieldDefinition WHERE EntityDefinition.QualifiedApiName = '$OBJECT'" --target-org ${{ secrets.SF_USERNAME }} --json | jq -r '.result.records[].QualifiedApiName' | paste -sd "," -)
