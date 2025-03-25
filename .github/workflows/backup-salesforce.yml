@@ -40,6 +40,10 @@ jobs:
         run: |
           mkdir -p data
           OBJECTS=$(sfdx force:data:soql:query -q "SELECT QualifiedApiName FROM EntityDefinition WHERE IsCustomSetting = FALSE AND IsEverCreated = TRUE" --json | jq -r '.result.records[].QualifiedApiName')
+          if [ -z "$OBJECTS" ]; then
+              echo "No objects found. Exiting backup process."
+              exit 0
+          fi
           for OBJECT in $OBJECTS; do
               echo "Backing up: $OBJECT"
               FIELDS=$(sfdx force:data:soql:query -q "SELECT QualifiedApiName FROM FieldDefinition WHERE EntityDefinition.QualifiedApiName = '$OBJECT'" --json | jq -r '.result.records[].QualifiedApiName' | paste -sd "," -)
