@@ -44,7 +44,7 @@ jobs:
               echo "Backing up: $OBJECT"
               FIELDS=$(sfdx force:data:soql:query -q "SELECT QualifiedApiName FROM FieldDefinition WHERE EntityDefinition.QualifiedApiName = '$OBJECT'" --target-org ${{ secrets.SF_USERNAME }} --json | jq -r '.result.records[].QualifiedApiName' | paste -sd "," -)
               if [ -n "$FIELDS" ]; then
-                  sfdx force:data:tree:export -q "SELECT $FIELDS FROM $OBJECT" -d ./data --target-org ${{ secrets.SF_USERNAME }}
+                  sfdx force:data:tree:export -q "SELECT $FIELDS FROM $OBJECT" -d ./data --target-org ${{ secrets.SF_USERNAME }} || echo "Skipped $OBJECT due to query failure" && true
               else
                   echo "Skipping $OBJECT (No fields found)"
               fi
