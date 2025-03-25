@@ -39,14 +39,11 @@ jobs:
       - name: Backup Salesforce data
         run: |
           mkdir -p data
-          OBJECTS=$(sfdx force:data:soql:query -q "SELECT QualifiedApiName FROM EntityDefinition WHERE IsCustomSetting = FALSE AND IsEverCreated = TRUE" --json | jq -r '.result.records[].QualifiedApiName')
-          if [ -z "$OBJECTS" ]; then
-              echo "No objects found. Exiting backup process."
-              exit 0
+          OBJECTS=$(sfdx force:data:soql:query -q "SELECT QualifiedApiName FROM EntityDefinition WHERE IsCustomSetting = FALSE AND IsEverCreatable = TRUE" --target-org ${{ secrets.SF_USERNAME }} --json | jq -r '.result.records[].QualifiedApiName')
           fi
           for OBJECT in $OBJECTS; do
               echo "Backing up: $OBJECT"
-              FIELDS=$(sfdx force:data:soql:query -q "SELECT QualifiedApiName FROM FieldDefinition WHERE EntityDefinition.QualifiedApiName = '$OBJECT'" --json | jq -r '.result.records[].QualifiedApiName' | paste -sd "," -)
+              FIELDS=$(sfdx force:data:soql:query -q "SELECT QualifiedApiName FROM FieldDefinition WHERE EntityDefinition.QualifiedApiName = '$OBJECT'" --target-org ${{ secrets.SF_USERNAME }} --json | jq -r '.result.records[].QualifiedApiName' | paste -sd "," -)
               if [ -n "$FIELDS" ]; then
                   sfdx force:data:tree:export -q "SELECT $FIELDS FROM $OBJECT" -d ./data --target-org ${{ secrets.SF_USERNAME }}
               else
