@@ -1,6 +1,7 @@
 name: Automated Salesforce Backup
 
 on:
+  workflow_dispatch:
   push:
     branches:
       - master 
@@ -37,4 +38,15 @@ jobs:
 
       - name: Backup Salesforce data
         run: |
-          sfdx force:source:deploy -p force-app -u kishorenate@gmail.com
+          mkdir -p data
+          OBJECTS=$(sfdx force:data:soql:query -q "SELECT QualifiedApiName FROM EntityDefinition WHERE IsCustomSetting = FALSE AND IsEverCreated = TRUE" --json | jq -r '.result.records[].QualifiedApiName')
+          for OBJECT in $OBJECTS; do
+              echo "Backing up: $OBJECT"
+              FIELDS=$(sfdx force:data:soql:query -q "SELECT QualifiedApiName FROM FieldDefinition WHERE EntityDefinition.QualifiedApiName = '$OBJECT'" --json | jq -r '.result.records[].QualifiedApiName' | paste -sd "," -)
+              if [ -n "$FIELDS" ]; then
+                  sfdx force:data:tree:export -q "SELECT $FIELDS FROM $OBJECT" -d ./data --target-org ${{ secrets.SF_USERNAME }}
+              else
+                  echo "Skipping $OBJECT (No fields found)"
+              fi
+          done
+          echo "Backup completed!"
