@@ -34,7 +34,7 @@ jobs:
       
       - name: backup Salesforce Configuration
         run: |
-          sfdx force:mdapi:retrieve -u -p force-app kishorenate@gmail.com
+          sfdx force:source:retrieve -p force-app -u kishorenate@gmail.com
 
       - name: Backup Salesforce data
         run: |
