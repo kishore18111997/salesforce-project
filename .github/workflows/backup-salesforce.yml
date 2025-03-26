@@ -2,9 +2,9 @@ name: Automated Salesforce Backup
 
 on:
   workflow_dispatch:
-  push:
-    branches:
-      - master 
+  # push:
+  #   branches:
+  #     - master 
 
 jobs:
   deploy:
@@ -34,7 +34,7 @@ jobs:
       
       - name: backup Salesforce Configuration
         run: |
-          sfdx force:source:retrieve -p force-app -u kishorenate@gmail.com
+          sfdx force:source:retrieve -p force-app -u ${{ secrets.SF_USERNAME }}
 
       - name: Backup Salesforce data
         run: |
@@ -50,3 +50,34 @@ jobs:
               fi
           done
           echo "Backup completed!"
+
+      - name: Install AWS CLI
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y awscli
+          aws --version
+
+      - name: Configure AWS CLI
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_DEFAULT_REGION: ${{ secrets.AWS_DEFAULT_REGION }}
+        run: |
+          aws configure set aws_access_key_id $AWS_ACCESS_KEY_ID
+          aws configure set aws_secret_access_key $AWS_SECRET_ACCESS_KEY
+          aws configure set region $AWS_DEFAULT_REGION
+      
+      - name: Upload Backup to S3
+        env:
+          S3_BUCKET_NAME: ${{ secrets.S3_BUCKET_NAME }}
+        run: |
+          TIMESTAMP=$(date +"%Y-%m-%d_%H-%M-%S")
+          S3_BUCKET_NAME=$S3_BUCKET_NAME
+          S3_FOLDER="salesforce-backup/$TIMESTAMP"
+          
+          echo "Uploading backup to S3: s3://$S3_BUCKET_NAME/$S3_FOLDER"
+          
+          aws s3 cp --recursive ./data s3://$S3_BUCKET_NAME/$S3_FOLDER/data
+          aws s3 cp --recursive ./force-app s3://$S3_BUCKET_NAME/$S3_FOLDER/force-app
+
+          echo "Backup successfully uploaded to S3!"
