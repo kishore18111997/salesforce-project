@@ -51,33 +51,25 @@ jobs:
           done
           echo "Backup completed!"
 
-      - name: Install AWS CLI
+      - name: Create a folder with date and time
         run: |
-          sudo apt-get update
-          sudo apt-get install -y awscli
-          aws --version
-
-      - name: Configure AWS CLI
+          TIMESTAMP=$(date +'%Y%m%d-%H%M%S')
+          echo "TIMESTAMP=$TIMESTAMP" >> $GITHUB_ENV
+      
+      - name: Upload salesforce configuration backup files to S3
+        uses: jakejarvis/s3-sync-action@v0.5.1
         env:
+          AWS_S3_BUCKET: ${{ secrets.S3_BUCKET_NAME }}
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          AWS_DEFAULT_REGION: ${{ secrets.AWS_DEFAULT_REGION }}
-        run: |
-          aws configure set aws_access_key_id $AWS_ACCESS_KEY_ID
-          aws configure set aws_secret_access_key $AWS_SECRET_ACCESS_KEY
-          aws configure set region $AWS_DEFAULT_REGION
-      
-      - name: Upload Backup to S3
-        env:
-          S3_BUCKET_NAME: ${{ secrets.S3_BUCKET_NAME }}
-        run: |
-          TIMESTAMP=$(date +"%Y-%m-%d_%H-%M-%S")
-          S3_BUCKET_NAME=$S3_BUCKET_NAME
-          S3_FOLDER="salesforce-backup/$TIMESTAMP"
-          
-          echo "Uploading backup to S3: s3://$S3_BUCKET_NAME/$S3_FOLDER"
-          
-          aws s3 cp --recursive ./data s3://$S3_BUCKET_NAME/$S3_FOLDER/data
-          aws s3 cp --recursive ./force-app s3://$S3_BUCKET_NAME/$S3_FOLDER/force-app
+          SOURCE_DIR: ./force-app
+          DEST_DIR: ${{ env.TIMESTAMP }}/force-app
 
-          echo "Backup successfully uploaded to S3!"
+      - name: Upload salesforce data backup files to S3
+        uses: jakejarvis/s3-sync-action@v0.5.1
+        env:
+          AWS_S3_BUCKET: ${{ secrets.S3_BUCKET_NAME }}
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          SOURCE_DIR: ./data
+          DEST_DIR: ${{ env.TIMESTAMP }}/data
