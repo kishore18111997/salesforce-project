@@ -36,4 +36,4 @@ jobs:
           SF_DOMAIN: ${{ secrets.SF_DOMAIN }}
           S3_BUCKET_NAME: ${{ secrets.S3_BUCKET_NAME }}
           S3_FOLDER: "salesforce_backup"
-        run: python backup_script.py
+        run: python sf-bsckup-local.py
